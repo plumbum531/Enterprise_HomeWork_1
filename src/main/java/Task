@@ -1,0 +1,11 @@
+Implement the Strategy pattern for compressing the incoming OutputStream.
+
+- The output should be a compressed OutputStream depending on the zip/gzip algorithm chosen
+
+- Use lambda constructions
+
+- How the data source is selected, the choice of the algorithm (interactive console, launch, config, ..) at your discretion
+
+*Note: for the zip algorithm, be sure to specify the file name in the archive:
+
+((ZipOutputStream) out).putNextEntry(new ZipEntry(..));
