@@ -1,8 +1,11 @@
 import lombok.AllArgsConstructor;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -10,15 +13,13 @@ import java.util.zip.ZipOutputStream;
 class Compressor {
     private final CompressionStrategy compressionStrategy;
 
-    void compress(Path inputFile, File outputFile) throws IOException {
-        try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
-             InputStream inputStream = new BufferedInputStream(new FileInputStream(inputFile.toString()))) {
+    void compress(String inputFile, File outputFile) throws IOException {
+        try (OutputStream outputStream = new FileOutputStream(outputFile)) {
             OutputStream finalOutputStream = compressionStrategy.compress(outputStream);
             if (finalOutputStream instanceof ZipOutputStream) {
-                ((ZipOutputStream) finalOutputStream).putNextEntry(new ZipEntry(inputFile.toString()));
+                ((ZipOutputStream) finalOutputStream).putNextEntry(new ZipEntry(inputFile));
             }
-            Files.copy(inputFile, finalOutputStream);
-            //inputStream.transferTo(finalOutputStream);
+            Files.copy(Paths.get(inputFile), finalOutputStream);
             finalOutputStream.close();
         }
     }

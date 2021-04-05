@@ -1,35 +1,36 @@
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipOutputStream;
 
 class Main {
     public static void main(String[] args) {
-        new Main().application(args);
+        if (args.length == 2) {
+            new Main().application(args);
+        } else {
+            System.out.println("Incorrect number of arguments");
+        }
     }
 
     void application(String[] args) {
         try {
-            System.out.println("Compress type " + args[0]);
-            Path inputFileName = Paths.get(args[1]);
+            String fileName = args[1];
+            String compressType = args[0];
 
-            if (args[0].equals("zip")) {
-                String fileName = inputFileName.getFileName().toString().
-                        replaceFirst("[.][^.]+$", "").concat(".zip");
-                File outFile = new File(fileName);
+            System.out.println("Compress type: " + args[0]);
+            if (compressType.equals("zip")) {
+                File outFile = new File(fileName.replaceFirst("[.][^.]+$", "").concat(".zip"));
                 Compressor zipCompressor = new Compressor(ZipOutputStream::new);
-                zipCompressor.compress(inputFileName, outFile);
-            } else if (args[0].equals("gzip")) {
-                File outFile = new File(inputFileName.getFileName().toString().concat(".gz"));
+                zipCompressor.compress(fileName, outFile);
+            } else if (compressType.equals("gzip")) {
+                File outFile = new File(fileName.concat(".gz"));
                 Compressor gzipCompressor = new Compressor(GZIPOutputStream::new);
-                gzipCompressor.compress(inputFileName, outFile);
+                gzipCompressor.compress(fileName, outFile);
             } else {
                 System.out.println("Unknown format");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("IO Exception " + e.getLocalizedMessage());
         }
     }
 }
